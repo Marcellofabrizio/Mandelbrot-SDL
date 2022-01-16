@@ -16,6 +16,9 @@ double map(int x, int max, double newMin, double newMax)
 }
 
 /**
+
+Algoritmo Mandelbrot
+
 for each pixel (Px, Py) on the screen do
     x0 := scaled x coordinate of pixel (scaled to lie in the Mandelbrot X scale (-2.00, 0.47))
     y0 := scaled y coordinate of pixel (scaled to lie in the Mandelbrot Y scale (-1.12, 1.12))
@@ -32,25 +35,30 @@ for each pixel (Px, Py) on the screen do
     color := palette[iteration]
     plot(Px, Py, color)
 **/
-
 void drawMandelbrot(SDL_Window *window, SDL_Surface *surface, SDL_Renderer *renderer)
 {
     int max_iterations = 1000;
 
     double xscale, yscale;
 
+    // Para a escala do conjunto. Esses valores ficaram bons para a tela
     xscale = 3.5 / WINDOW_WIDTH;
     yscale = 1.5 / WINDOW_HEIGHT;
+
+
+    // Para a possição do centro do conjunto
+    double xmax = 1.0;
+    double xmin = 2.5;
+    double ymax = 1.0;
+    double ymin = 2.5;
 
     for (int Px = 0; Px < WINDOW_WIDTH; Px++)
     {
         for (int Py = 0; Py < WINDOW_HEIGHT; Py++)
         {
 
-            // double cx = map(Px, WINDOW_WIDTH, -1.5, 0.7);
-            // double cy = map(Py, WINDOW_HEIGHT, -1.0, 1.0);
-            double cx = Px * (2.0 + 2.0) / WINDOW_WIDTH - 2.0;
-            double cy = Py * (2.0 + 2.0) / WINDOW_HEIGHT - 2.0;
+            double cx = Px * (xmax + xmin) / WINDOW_WIDTH - xmin;
+            double cy = Py * (ymax + ymin) / WINDOW_HEIGHT - ymin;
 
             int n = 0;
             double x = 0.0, y = 0.0;
