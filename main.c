@@ -9,10 +9,9 @@
 #define WINDOW_WIDTH 1400
 #define FLIPS 24
 
-double map(int x, int max, double newMin, double newMax)
+double map(int value, double oldMin, double oldMax, double newMin, double newMax)
 {
-    double range = newMax = newMin;
-    return x * (range / max) + newMin;
+    return newMin + (newMax - newMin) * ((value - oldMin) / (oldMax - oldMin));
 }
 
 /**
@@ -45,28 +44,28 @@ void drawMandelbrot(SDL_Window *window, SDL_Surface *surface, SDL_Renderer *rend
     xscale = 3.5 / WINDOW_WIDTH;
     yscale = 1.5 / WINDOW_HEIGHT;
 
-
-    // Para a possição do centro do conjunto
-    double xmax = 1.0;
-    double xmin = 2.5;
-    double ymax = 1.0;
-    double ymin = 2.5;
+    // Play arround with these values
+    double manMax = 2.5;  // max mandelbrot scale
+    double manMin = -2.5; // min mandelbrot scale
+    double navX = 0.0;   // x axis navigation
+    double navY = 0.0;    // y axis navigation
+    double zoom = 1.0;
 
     for (int Px = 0; Px < WINDOW_WIDTH; Px++)
     {
         for (int Py = 0; Py < WINDOW_HEIGHT; Py++)
         {
 
-            double cx = Px * (xmax + xmin) / WINDOW_WIDTH - xmin;
-            double cy = Py * (ymax + ymin) / WINDOW_HEIGHT - ymin;
+            double cx = (map(Px, 0, WINDOW_WIDTH, manMin, manMax) / zoom) + navX;
+            double cy = (map(Py, 0, WINDOW_HEIGHT, manMin, manMax) / zoom) + navY;
 
             int n = 0;
             double x = 0.0, y = 0.0;
 
             while (n < max_iterations)
             {
-                double xx = x * x - y * y;
-                double yy = 2.0 * x * y;
+                double xx = x * x - y * y; // real component
+                double yy = 2.0 * x * y;   // imaginary component
                 x = xx + cx;
                 y = yy + cy;
 
@@ -79,8 +78,6 @@ void drawMandelbrot(SDL_Window *window, SDL_Surface *surface, SDL_Renderer *rend
             }
 
             int r, g, b;
-
-            // double brightness = map(n, 100, 0, 255);
 
             int brightness = 0;
             if (n == max_iterations)
